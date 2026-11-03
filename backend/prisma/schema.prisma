@@ -1,0 +1,59 @@
+// =============================================================
+// PRISMA SCHEMA FILE
+// =============================================================
+// This file defines the structure of your database.
+// Think of it as a blueprint — Prisma reads this file and
+// creates the actual SQLite tables for you.
+//
+// After changing this file, run:
+//   npx prisma migrate dev --name describe_your_change
+// =============================================================
+
+// The "generator" tells Prisma to create a JavaScript client
+// that we can import in our code to read/write data.
+generator client {
+  provider = "prisma-client-js"
+}
+
+// The "datasource" tells Prisma which database to use.
+// We're using SQLite, which stores everything in a single file.
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL") // Read from .env file
+}
+
+// =============================================================
+// USER MODEL
+// =============================================================
+// Stores registered users. Each user has a unique email.
+// The password is stored as a bcrypt hash, never as plain text.
+model User {
+  id        Int       @id @default(autoincrement()) // Auto-incrementing primary key
+  name      String                                   // User's display name
+  email     String    @unique                        // Must be unique — no duplicate accounts
+  password  String                                   // Bcrypt-hashed password
+  createdAt DateTime  @default(now())                // Automatically set when user registers
+
+  // RELATIONSHIP: One user can have many expenses.
+  // This creates the link between User and Expense tables.
+  expenses  Expense[]
+}
+
+// =============================================================
+// EXPENSE MODEL
+// =============================================================
+// Stores individual expenses. Each expense belongs to one user.
+model Expense {
+  id          Int      @id @default(autoincrement()) // Auto-incrementing primary key
+  title       String                                  // Short name like "Lunch" or "Bus ticket"
+  amount      Float                                   // How much was spent (e.g., 12.50)
+  category    String                                  // Category like "Food", "Transport", etc.
+  date        DateTime                                // When the expense occurred
+  description String   @default("")                   // Optional extra details
+  createdAt   DateTime @default(now())                // When the record was created
+
+  // FOREIGN KEY: Links this expense to a specific user.
+  // If the user is deleted, all their expenses are also deleted (Cascade).
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

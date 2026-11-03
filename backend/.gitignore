@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Environment variables (contains secrets!)
+.env
+
+# SQLite database file (generated, not source code)
+prisma/dev.db
+prisma/dev.db-journal
+
+# Keep Prisma migrations in version control so staging can initialize its database.
