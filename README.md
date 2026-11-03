@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 💰 Personal Expense Tracker
 
 A full-stack web application designed to help individuals monitor daily expenses, categorize transactions, and visualize spending habits over time. Built with a modern React frontend and a robust Node.js/Express RESTful backend backed by SQLite and Prisma ORM.
@@ -199,7 +198,6 @@ The frontend will run on `http://localhost:5173`. Open this URL in your browser.
 - [ ] Recurring expense scheduler (subscriptions, rent).
 - [ ] Dark / Light mode UI toggle.
 - [ ] Multi-currency support with real-time conversion rates.
-=======
+
 # expense-track
-small web created for tracking expense everyday 
->>>>>>> origin/main
+small web created for tracking expense everyday
