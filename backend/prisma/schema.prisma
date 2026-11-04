@@ -16,9 +16,9 @@ generator client {
 }
 
 // The "datasource" tells Prisma which database to use.
-// We're using SQLite, which stores everything in a single file.
+// PostgreSQL is used for both staging and hosted deployments.
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL") // Read from .env file
 }
 

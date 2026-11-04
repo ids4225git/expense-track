@@ -28,10 +28,10 @@ const app = express();
 // Middleware are functions that run BEFORE your route handlers.
 // They process every incoming request.
 
-// CORS: Allows the React frontend (running on a different port)
-// to make requests to this backend. Without this, the browser
-// would block the requests for security reasons.
-app.use(cors());
+// Allow the local frontend in development and the configured frontend in staging.
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+}));
 
 // JSON Parser: Tells Express to automatically parse JSON request
 // bodies. Without this, req.body would be undefined.

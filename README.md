@@ -1,6 +1,6 @@
 # 💰 Personal Expense Tracker
 
-A full-stack web application designed to help individuals monitor daily expenses, categorize transactions, and visualize spending habits over time. Built with a modern React frontend and a robust Node.js/Express RESTful backend backed by SQLite and Prisma ORM.
+A full-stack web application designed to help individuals monitor daily expenses, categorize transactions, and visualize spending habits over time. Built with a modern React frontend and a Node.js/Express REST API backed by PostgreSQL and Prisma ORM.
 
 ---
 
@@ -54,7 +54,7 @@ Managing personal finances often feels cumbersome with spreadsheets or overly co
 ### Backend
 - **Node.js** & **Express.js** (REST API framework)
 - **Prisma ORM** (Type-safe database modeling and migrations)
-- **SQLite** (Self-contained zero-config relational database)
+- **PostgreSQL** (Relational database)
 - **JSON Web Tokens (`jsonwebtoken`)** (Stateless authentication)
 - **bcryptjs** (One-way password hashing)
 - **CORS & dotenv** (Security and environment configuration)
@@ -82,7 +82,7 @@ The project follows a standard multi-tier client-server pattern:
                  │ Prisma ORM Client
                  ▼
 ┌─────────────────────────────────┐
-│      SQLite Database File       │
+│       PostgreSQL Database       │
 │  - User & Expense Tables        │
 └─────────────────────────────────┘
 ```
@@ -146,11 +146,12 @@ Defined in `backend/prisma/schema.prisma`:
 ### Prerequisites
 - [Node.js](https://nodejs.org/) (v18 or higher recommended)
 - `npm` (bundled with Node.js)
+- A PostgreSQL database and its connection URL
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/personal-expense-tracker.git
-cd personal-expense-tracker
+git clone https://github.com/ids4225git/expense-track.git
+cd expense-track
 ```
 
 ### 2. Set up the Backend
@@ -158,8 +159,13 @@ cd personal-expense-tracker
 cd backend
 npm install
 
-# Run database migrations to initialize SQLite
-npx prisma migrate dev --name init
+cp .env.example .env
+# Then set DATABASE_URL in .env to your PostgreSQL URL.
+# Keep .env private; never commit it.
+
+# Generate Prisma Client and create/update the database tables
+npx prisma generate
+npx prisma migrate dev
 
 # Start the Express server
 npm run dev
@@ -172,10 +178,32 @@ Open a new terminal window:
 cd frontend
 npm install
 
+cp .env.example .env
 # Start Vite development server
 npm run dev
 ```
 The frontend will run on `http://localhost:5173`. Open this URL in your browser.
+
+### 4. Deploy a staging environment to Render
+
+1. Create a PostgreSQL database on Render. Copy its connection URL into the backend
+   service's `DATABASE_URL` environment variable.
+2. Create a backend Web Service with root directory `backend`:
+   - Build command: `npm ci && npx prisma generate`
+   - Start command: `npx prisma migrate deploy && npm start`
+   - Set `DATABASE_URL`, a strong private `JWT_SECRET`, and `FRONTEND_URL` to the
+     deployed frontend's origin.
+3. Create a frontend Static Site with root directory `frontend`:
+   - Build command: `npm ci && npm run build`
+   - Publish directory: `dist`
+   - Set `VITE_API_URL` to the backend's public URL, without `/api`.
+4. After both services have URLs, set `FRONTEND_URL` and `VITE_API_URL` to their
+   respective service URLs and redeploy if needed.
+
+Environment variables are configured in Render's service settings, not committed to
+Git. `VITE_API_URL` is public browser configuration; never put secrets in `VITE_*`
+variables. A new staging database starts empty; the local SQLite database is not
+automatically copied.
 
 ---
 
@@ -198,6 +226,3 @@ The frontend will run on `http://localhost:5173`. Open this URL in your browser.
 - [ ] Recurring expense scheduler (subscriptions, rent).
 - [ ] Dark / Light mode UI toggle.
 - [ ] Multi-currency support with real-time conversion rates.
-
-# expense-track
-small web created for tracking expense everyday

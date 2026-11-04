@@ -12,11 +12,17 @@
 
 import axios from 'axios';
 
+const apiBaseUrl = import.meta.env.VITE_API_URL;
+
+if (!apiBaseUrl && !import.meta.env.DEV) {
+  throw new Error('VITE_API_URL must be set for production builds.');
+}
+
 // Create an Axios instance with a base URL.
 // Now instead of axios.get('http://localhost:3000/api/expenses'),
 // we just write api.get('/api/expenses').
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: apiBaseUrl || 'http://localhost:3000',
 });
 
 // =============================================================

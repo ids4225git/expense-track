@@ -2,6 +2,14 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
+## Backend API URL
+
+The frontend reads `VITE_API_URL` to determine the backend server address. For local
+development, copy `.env.example` to `.env` in the `frontend` folder. For a hosted
+build, set `VITE_API_URL` to the backend's public URL (for example,
+`https://your-backend.onrender.com`) in the hosting provider's environment settings.
+Do not include `/api` at the end. This value is public and must not contain secrets.
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
