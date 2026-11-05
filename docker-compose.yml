@@ -1,0 +1,63 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: expense_track
+      POSTGRES_USER: expense
+      POSTGRES_PASSWORD: expense_local_dev_only
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U expense -d expense_track"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    command: sh -c "npx prisma migrate deploy && npm run dev"
+    environment:
+      DATABASE_URL: postgresql://expense:expense_local_dev_only@db:5432/expense_track?schema=public
+      JWT_SECRET: local_docker_only_change_for_deployment
+      PORT: 3000
+      FRONTEND_URL: http://${TAILSCALE_IP:-127.0.0.1}:5173
+    ports:
+      - "${TAILSCALE_IP:-127.0.0.1}:3000:3000"
+    volumes:
+      - ./backend:/app
+      - backend_node_modules:/app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      VITE_API_URL: http://${TAILSCALE_IP:-127.0.0.1}:3000
+    ports:
+      - "${TAILSCALE_IP:-127.0.0.1}:5173:5173"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  backend_node_modules:
+  frontend_node_modules:
+  postgres_data:

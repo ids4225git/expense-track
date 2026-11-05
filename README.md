@@ -144,7 +144,7 @@ Defined in `backend/prisma/schema.prisma`:
 ## 🚀 Installation & Local Setup
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- [Node.js](https://nodejs.org/) (v20.19+ or v22.12+ for Vite 8)
 - `npm` (bundled with Node.js)
 - A PostgreSQL database and its connection URL
 
@@ -184,7 +184,32 @@ npm run dev
 ```
 The frontend will run on `http://localhost:5173`. Open this URL in your browser.
 
-### 4. Deploy a staging environment to Render
+### Run locally with Docker Compose
+
+Install and start Docker Desktop, then from the project root run:
+
+```powershell
+docker compose up --build
+```
+
+Open `http://localhost:5173`. The API is available at `http://localhost:3000`.
+Compose starts PostgreSQL, runs the Prisma migrations, and starts the frontend and
+backend. This local setup uses a separate Docker volume; it does not import or alter
+the SQLite database in `backend/prisma`.
+
+To access the app from a phone connected to the same Tailscale network, copy the root
+`.env.example` to `.env` and set `TAILSCALE_IP` in `.env` to this PC's Tailscale IP.
+The root `.env` is ignored by Git; do not commit it. Recreate the services with
+`docker compose up -d --force-recreate`, then open
+`http://<PC-TAILSCALE-IP>:5173` on the phone. The database is not published to the
+host. Keep Tailscale enabled on both devices, and do not expose these ports through
+router port forwarding or Tailscale Funnel.
+
+Press `Ctrl+C` to stop the services. Run `docker compose down` to remove the stopped
+containers while keeping the PostgreSQL data volume. These credentials are for local
+development only and must not be used for a public deployment.
+
+### 5. Deploy a staging environment to Render
 
 1. Create a PostgreSQL database on Render. Copy its connection URL into the backend
    service's `DATABASE_URL` environment variable.

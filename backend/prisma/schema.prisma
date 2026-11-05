@@ -3,7 +3,7 @@
 // =============================================================
 // This file defines the structure of your database.
 // Think of it as a blueprint — Prisma reads this file and
-// creates the actual SQLite tables for you.
+// creates the actual database tables for you.
 //
 // After changing this file, run:
 //   npx prisma migrate dev --name describe_your_change
