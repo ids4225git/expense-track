@@ -36,21 +36,24 @@ Managing personal finances often feels cumbersome with spreadsheets or overly co
 - **Categorization**: Organize purchases by standard categories (Food, Transport, Entertainment, Shopping, Bills, Health, Education, Other).
 - **Multiple Currencies**: Record expenses in Japanese yen (JPY) or US dollars (USD); dashboard totals are kept separate by currency.
 - **Interactive Dashboard**:
-  - Total spending & transaction count metrics.
-  - Visual category spending distribution.
-  - Category and date range filtering.
-- **Responsive UI**: Custom CSS styling with CSS variables, accessible forms, and mobile-friendly viewport adaptations.
+  - This month's spending (vs last month), daily average, monthly count, and all-time total.
+  - Six-month spending bar chart and category breakdown, switchable between JPY and USD.
+  - Expense table with search, category and date range filters, and edit/delete actions.
+  - Loading skeletons, empty states, and error messages with Retry.
+- **Responsive UI**: Sidebar layout on desktop; summary card, top categories, and a bottom tab bar on phones (under 900px).
+- **Design System**: "Clean & calm" design tokens (colors, type, spacing, radius) defined once as CSS variables in `frontend/src/styles/tokens.css`; each category keeps the same color everywhere.
+- **Accessible Forms**: Real buttons and labels, 44px touch targets, visible keyboard focus, and screen-reader labels on icon buttons.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React 18** (Component architecture, Hooks: `useState`, `useEffect`)
+- **React 19** (Component architecture, Hooks: `useState`, `useEffect`, `useCallback`)
 - **Vite** (Next-generation frontend tooling and rapid bundling)
 - **React Router v7** (Client-side routing and protected routes)
 - **Axios** (HTTP client with automatic JWT header interceptors)
-- **CSS3** (Responsive design, custom properties, flexbox/grid)
+- **CSS3** (Design tokens as custom properties, responsive flexbox/grid; no UI library)
 
 ### Backend
 - **Node.js** & **Express.js** (REST API framework)
@@ -186,6 +189,13 @@ npm run dev
 ```
 The frontend will run on `http://localhost:5173`. Open this URL in your browser.
 
+To check a production build locally, set `VITE_API_URL` first. Without it, `src/services/api.js`
+stops the build on purpose, and Vite still reports success while leaving the app code out:
+```powershell
+$env:VITE_API_URL="http://localhost:3000"; npm run build
+```
+Run `npm run lint` to check the code style.
+
 ### Run locally with Docker Compose
 
 Install and start Docker Desktop, then from the project root run:
@@ -240,16 +250,17 @@ automatically copied.
 
 | View | Description |
 |---|---|
-| `dashboard.png` | **Dashboard**: Overview cards, category spending chart, and filtered expense list |
-| `add-expense.png` | **Expense Form**: Clean input validation and category dropdown |
-| `login.png` | **Authentication**: Clean login/register interface with error states |
+| `dashboard.png` | **Dashboard**: KPI cards, monthly chart, category breakdown, and searchable expense table |
+| `dashboard-mobile.png` | **Mobile Home**: Summary card, top categories, expense list, and bottom tab bar |
+| `add-expense.png` | **Expense Form**: Large amount field, currency switch, and category chips |
+| `login.png` | **Authentication**: Login/register card with error states |
 
 ---
 
 ## 🔮 Future Improvements
 
 - [ ] Export transactions to CSV / PDF reports.
-- [ ] Monthly budget threshold alerts (e.g. notify when category reaches 80% limit).
+- [ ] Monthly budgets per category, with progress bars and alerts (e.g. notify when a category reaches 80% of its limit). The UI design already includes budget cards; they need budget data from the backend first.
 - [ ] Recurring expense scheduler (subscriptions, rent).
 - [ ] Dark / Light mode UI toggle.
 - [ ] Currency conversion with real-time exchange rates.

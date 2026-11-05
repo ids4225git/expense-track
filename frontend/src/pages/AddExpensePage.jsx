@@ -17,6 +17,7 @@ function AddExpensePage() {
 
   async function handleSubmit(formData) {
     try {
+      setError('');
       await createExpense(formData);
       navigate('/'); // Go back to dashboard after creating
     } catch (err) {
@@ -25,10 +26,13 @@ function AddExpensePage() {
   }
 
   return (
-    <div className="page">
-      <h1>Add New Expense</h1>
-      {error && <p className="form-error">{error}</p>}
-      <ExpenseForm onSubmit={handleSubmit} buttonText="Add Expense" />
+    <div className="form-page">
+      <ExpenseForm
+        heading="New expense"
+        onSubmit={handleSubmit}
+        buttonText="Save expense"
+        submitError={error}
+      />
     </div>
   );
 }

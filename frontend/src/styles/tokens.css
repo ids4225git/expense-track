@@ -1,0 +1,75 @@
+/* =============================================================
+   DESIGN TOKENS — "clean & calm" expense UI kit
+   =============================================================
+   Every color, size and radius in the app comes from here.
+   Components use var(--token-name) instead of hard-coded values,
+   so changing a value here restyles the whole app.
+
+   Based on design/expense-ui-kit/tokens.css. The kit defines 5
+   category colors; this app has 8 categories, so Entertainment,
+   Health and Education get extra colors in the same
+   solid / tint / ink pattern. Bills uses the "housing" colors.
+   ============================================================= */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  /* Surfaces */
+  --color-bg: #F6F6F3;            /* page background */
+  --color-surface: #FFFFFF;       /* cards, sidebar, tab bar */
+  --color-surface-muted: #F3F3EF; /* icon buttons, hover backgrounds */
+  --color-border: #ECEBE6;        /* card borders */
+  --color-border-strong: #E2E1DB; /* inputs, secondary buttons */
+  --color-divider: #F1F0EC;       /* table row lines */
+  --color-track: #EDECE7;         /* progress tracks, loading skeletons */
+
+  /* Text */
+  --color-text: #1C1C1A;
+  --color-text-secondary: #55554F;
+  --color-text-muted: #62625C;    /* labels, meta (passes 4.5:1 on white) */
+  --color-text-disabled: #8A8A83;
+  --color-text-inverse: #FFFFFF;  /* text on the accent color */
+
+  /* Accent (one only) */
+  --color-accent: #0B6B58;
+  --color-accent-hover: #08493C;
+  --color-accent-soft: #EEF5F2;   /* active nav item */
+  --color-accent-chart: #A9CFC4;  /* past months in bar chart */
+
+  /* Status */
+  --color-warning: #B45309;       /* error / alert text */
+  --color-over-budget: #D9822B;
+
+  /* Category colors: solid (bars, dots) / tint (icon bg) / ink (icon text) */
+  --cat-housing: #0B6B58;       --cat-housing-tint: #E3F0EC;       --cat-housing-ink: #0B6B58;
+  --cat-food: #D9822B;          --cat-food-tint: #FBEEDF;          --cat-food-ink: #A4561A;
+  --cat-transport: #2F5BD3;     --cat-transport-tint: #E4EBFB;     --cat-transport-ink: #2448A8;
+  --cat-shopping: #9B5BC4;      --cat-shopping-tint: #F1E6F7;      --cat-shopping-ink: #77409A;
+  --cat-other: #A3A39C;         --cat-other-tint: #EFEFEC;         --cat-other-ink: #55554F;
+  /* Added for this app's extra categories */
+  --cat-entertainment: #C2457A; --cat-entertainment-tint: #F8E5EE; --cat-entertainment-ink: #9A2F5D;
+  --cat-health: #CF4B4B;        --cat-health-tint: #FBE6E6;        --cat-health-ink: #A33636;
+  --cat-education: #7A9A2E;     --cat-education-tint: #EEF3E0;     --cat-education-ink: #556B1E;
+
+  /* Type */
+  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --text-xs: 12px; --text-sm: 13px; --text-base: 14px; --text-md: 16px;
+  --text-lg: 22px; --text-xl: 26px; --text-kpi: 28px; --text-hero: 34px; --text-amount: 48px;
+  --weight-regular: 400; --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700;
+  --tracking-tight: -0.02em;
+
+  /* Spacing (4px base) */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-7: 28px; --space-8: 32px; --space-10: 40px;
+
+  /* Radius */
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px; --radius-xl: 18px; --radius-pill: 999px;
+
+  /* Elevation (used sparingly: only the floating add button) */
+  --shadow-fab: 0 6px 16px rgba(11, 107, 88, 0.28);
+
+  /* Sizing */
+  --touch-target: 44px;
+  --sidebar-width: 232px;
+  --content-max: 1240px;
+  --tab-bar-height: 72px;
+}

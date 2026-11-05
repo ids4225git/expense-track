@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Icon from '../components/Icon';
 import { registerUser } from '../services/authService';
 
 function RegisterPage() {
@@ -44,18 +45,32 @@ function RegisterPage() {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
-        <h1>💰 Expense Tracker</h1>
-        <h2>Create Account</h2>
-        <p className="auth-subtitle">Start tracking your expenses today</p>
+      <div className="card auth-card">
+        <div className="brand">
+          <span className="brand-mark">
+            <Icon name="wallet" />
+          </span>
+          Expense Tracker
+        </div>
 
-        {error && <p className="form-error">{error}</p>}
+        <div className="auth-heading">
+          <h1 className="auth-title">Create Account</h1>
+          <p className="auth-subtitle">Start tracking your expenses today</p>
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
+        {error && (
+          <p className="form-error" role="alert">
+            <Icon name="alert" size={16} />
+            {error}
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-field">
             <label htmlFor="name">Full Name</label>
             <input
               id="name"
+              className="text-input"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -64,10 +79,11 @@ function RegisterPage() {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-field">
             <label htmlFor="email">Email</label>
             <input
               id="email"
+              className="text-input"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -76,10 +92,11 @@ function RegisterPage() {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-field">
             <label htmlFor="password">Password</label>
             <input
               id="password"
+              className="text-input"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -89,10 +106,11 @@ function RegisterPage() {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-field">
             <label htmlFor="confirmPassword">Confirm Password</label>
             <input
               id="confirmPassword"
+              className="text-input"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -101,7 +119,7 @@ function RegisterPage() {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
+          <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
         </form>

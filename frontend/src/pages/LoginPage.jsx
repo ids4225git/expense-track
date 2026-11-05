@@ -8,6 +8,7 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Icon from '../components/Icon';
 import { loginUser } from '../services/authService';
 
 function LoginPage() {
@@ -45,18 +46,32 @@ function LoginPage() {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
-        <h1>💰 Expense Tracker</h1>
-        <h2>Welcome Back</h2>
-        <p className="auth-subtitle">Log in to manage your expenses</p>
+      <div className="card auth-card">
+        <div className="brand">
+          <span className="brand-mark">
+            <Icon name="wallet" />
+          </span>
+          Expense Tracker
+        </div>
 
-        {error && <p className="form-error">{error}</p>}
+        <div className="auth-heading">
+          <h1 className="auth-title">Welcome Back</h1>
+          <p className="auth-subtitle">Log in to manage your expenses</p>
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
+        {error && (
+          <p className="form-error" role="alert">
+            <Icon name="alert" size={16} />
+            {error}
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-field">
             <label htmlFor="email">Email</label>
             <input
               id="email"
+              className="text-input"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -65,10 +80,11 @@ function LoginPage() {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-field">
             <label htmlFor="password">Password</label>
             <input
               id="password"
+              className="text-input"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -77,7 +93,7 @@ function LoginPage() {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
+          <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
             {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
