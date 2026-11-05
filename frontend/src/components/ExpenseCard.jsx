@@ -10,6 +10,7 @@
 // =============================================================
 
 import { Link } from 'react-router-dom';
+import { formatCurrency } from '../utils/currency';
 
 function ExpenseCard({ expense, onDelete }) {
   // Format the date to a readable string (e.g., "Oct 5, 2024")
@@ -41,7 +42,9 @@ function ExpenseCard({ expense, onDelete }) {
           <h3 className="expense-title">{expense.title}</h3>
           <p className="expense-category">{expense.category}</p>
         </div>
-        <span className="expense-amount">${expense.amount.toFixed(2)}</span>
+        <span className="expense-amount">
+          {formatCurrency(expense.amount, expense.currency)}
+        </span>
       </div>
 
       <div className="expense-card-body">

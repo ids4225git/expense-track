@@ -34,6 +34,7 @@ Managing personal finances often feels cumbersome with spreadsheets or overly co
 - **Protected Routing**: Client-side navigation guards restricting unauthorized access to private dashboard views.
 - **Full Expense CRUD**: Add, inspect, update, and remove expenses seamlessly.
 - **Categorization**: Organize purchases by standard categories (Food, Transport, Entertainment, Shopping, Bills, Health, Education, Other).
+- **Multiple Currencies**: Record expenses in Japanese yen (JPY) or US dollars (USD); dashboard totals are kept separate by currency.
 - **Interactive Dashboard**:
   - Total spending & transaction count metrics.
   - Visual category spending distribution.
@@ -112,8 +113,9 @@ Defined in `backend/prisma/schema.prisma`:
 |---|---|---|
 | `id` | `Int` | Primary Key, Auto-increment |
 | `title` | `String` | Short title/description of expense |
-| `amount` | `Float` | Dollar amount spent |
+| `amount` | `Float` | Expense amount in its selected currency |
 | `category` | `String` | Category identifier |
+| `currency` | `String` | Currency code (`JPY` or `USD`; new expenses default to `JPY`) |
 | `date` | `DateTime`| Date of the transaction |
 | `description` | `String` | Optional notes |
 | `createdAt` | `DateTime`| Record creation timestamp |
@@ -133,7 +135,7 @@ Defined in `backend/prisma/schema.prisma`:
 | Method | Endpoint | Description | Auth Required |
 |---|---|---|---|
 | `GET` | `/api/expenses` | Get user expenses (supports `?category=...&startDate=...&endDate=...`) | Yes |
-| `GET` | `/api/expenses/summary` | Retrieve aggregated spending totals by category | Yes |
+| `GET` | `/api/expenses/summary` | Retrieve totals grouped by currency and category | Yes |
 | `GET` | `/api/expenses/:id` | Retrieve single expense by ID | Yes |
 | `POST` | `/api/expenses` | Create a new expense | Yes |
 | `PUT` | `/api/expenses/:id` | Update an existing expense | Yes |
@@ -250,4 +252,4 @@ automatically copied.
 - [ ] Monthly budget threshold alerts (e.g. notify when category reaches 80% limit).
 - [ ] Recurring expense scheduler (subscriptions, rent).
 - [ ] Dark / Light mode UI toggle.
-- [ ] Multi-currency support with real-time conversion rates.
+- [ ] Currency conversion with real-time exchange rates.

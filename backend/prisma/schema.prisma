@@ -48,6 +48,7 @@ model Expense {
   title       String                                  // Short name like "Lunch" or "Bus ticket"
   amount      Float                                   // How much was spent (e.g., 12.50)
   category    String                                  // Category like "Food", "Transport", etc.
+  currency    String   @default("JPY")                // ISO currency code: JPY or USD
   date        DateTime                                // When the expense occurred
   description String   @default("")                   // Optional extra details
   createdAt   DateTime @default(now())                // When the record was created

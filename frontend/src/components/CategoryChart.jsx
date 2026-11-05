@@ -5,16 +5,15 @@
 // No chart library needed — just divs with dynamic widths!
 //
 // Props:
-//   - data: array of { category, total, count } objects
+//   - data: array of { category, currency, total, count } objects
 // =============================================================
+
+import { formatCurrency } from '../utils/currency';
 
 function CategoryChart({ data }) {
   if (!data || data.length === 0) {
     return <p className="no-data">No spending data yet.</p>;
   }
-
-  // Find the highest total to calculate relative bar widths
-  const maxTotal = Math.max(...data.map((item) => item.total));
 
   // Colors for different categories
   const categoryColors = {
@@ -28,26 +27,39 @@ function CategoryChart({ data }) {
     Other: '#7C8CF8',
   };
 
+  const currencies = [...new Set(data.map((item) => item.currency))].sort();
+
   return (
     <div className="category-chart">
-      {data.map((item) => (
-        <div key={item.category} className="chart-row">
-          <span className="chart-label">{item.category}</span>
-          <div className="chart-bar-container">
-            <div
-              className="chart-bar"
-              style={{
-                // Width is proportional to the max value (percentage)
-                width: `${(item.total / maxTotal) * 100}%`,
-                backgroundColor: categoryColors[item.category] || '#7C8CF8',
-              }}
-            >
-              <span className="chart-value">${item.total.toFixed(2)}</span>
-            </div>
+      {currencies.map((currency) => {
+        const currencyData = data.filter((item) => item.currency === currency);
+        const maxTotal = Math.max(...currencyData.map((item) => item.total));
+
+        return (
+          <div key={currency} className="category-chart-group">
+            <h3>{currency}</h3>
+            {currencyData.map((item) => (
+              <div key={`${currency}-${item.category}`} className="chart-row">
+                <span className="chart-label">{item.category}</span>
+                <div className="chart-bar-container">
+                  <div
+                    className="chart-bar"
+                    style={{
+                      width: `${(item.total / maxTotal) * 100}%`,
+                      backgroundColor: categoryColors[item.category] || '#7C8CF8',
+                    }}
+                  >
+                    <span className="chart-value">
+                      {formatCurrency(item.total, currency)}
+                    </span>
+                  </div>
+                </div>
+                <span className="chart-count">{item.count} items</span>
+              </div>
+            ))}
           </div>
-          <span className="chart-count">{item.count} items</span>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

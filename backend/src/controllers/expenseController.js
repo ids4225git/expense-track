@@ -13,6 +13,7 @@
 // =============================================================
 
 const prisma = require('../services/prisma');
+const SUPPORTED_CURRENCIES = new Set(['JPY', 'USD']);
 
 // =============================================================
 // GET ALL EXPENSES — with optional filtering
@@ -95,11 +96,12 @@ async function getExpense(req, res) {
 // CREATE EXPENSE
 // =============================================================
 // POST /api/expenses
-// Request body: { title, amount, category, date, description }
+// Request body: { title, amount, category, currency, date, description }
 async function createExpense(req, res) {
   try {
     const userId = req.user.userId;
     const { title, amount, category, date, description } = req.body;
+    const currency = req.body.currency ?? 'JPY';
 
     // --- VALIDATION ---
     if (!title || !amount || !category || !date) {
@@ -112,12 +114,21 @@ async function createExpense(req, res) {
       return res.status(400).json({ error: 'Amount must be a positive number.' });
     }
 
+    if (!SUPPORTED_CURRENCIES.has(currency)) {
+      return res.status(400).json({ error: 'Currency must be JPY or USD.' });
+    }
+
+    if (currency === 'JPY' && !Number.isInteger(amount)) {
+      return res.status(400).json({ error: 'JPY amounts must be whole numbers.' });
+    }
+
     // Create the expense in the database
     const expense = await prisma.expense.create({
       data: {
         title,
         amount,
         category,
+        currency,
         date: new Date(date),       // Convert date string to Date object
         description: description || '',
         userId,                     // Link expense to the logged-in user
@@ -135,12 +146,13 @@ async function createExpense(req, res) {
 // UPDATE EXPENSE
 // =============================================================
 // PUT /api/expenses/:id
-// Request body: { title, amount, category, date, description }
+// Request body: { title, amount, category, currency, date, description }
 async function updateExpense(req, res) {
   try {
     const userId = req.user.userId;
     const expenseId = parseInt(req.params.id);
     const { title, amount, category, date, description } = req.body;
+    const requestedCurrency = req.body.currency;
 
     // First, check if the expense exists and belongs to this user
     const existingExpense = await prisma.expense.findUnique({
@@ -166,6 +178,15 @@ async function updateExpense(req, res) {
       return res.status(400).json({ error: 'Amount must be a positive number.' });
     }
 
+    if (requestedCurrency !== undefined && !SUPPORTED_CURRENCIES.has(requestedCurrency)) {
+      return res.status(400).json({ error: 'Currency must be JPY or USD.' });
+    }
+
+    const currency = requestedCurrency ?? existingExpense.currency;
+    if (currency === 'JPY' && !Number.isInteger(amount)) {
+      return res.status(400).json({ error: 'JPY amounts must be whole numbers.' });
+    }
+
     // Update the expense in the database
     const updatedExpense = await prisma.expense.update({
       where: { id: expenseId },
@@ -173,6 +194,7 @@ async function updateExpense(req, res) {
         title,
         amount,
         category,
+        currency,
         date: new Date(date),
         description: description || '',
       },
@@ -223,7 +245,7 @@ async function deleteExpense(req, res) {
 // GET EXPENSE SUMMARY — Spending overview by category
 // =============================================================
 // GET /api/expenses/summary
-// Returns: { totalAmount, totalCount, byCategory: [...] }
+// Returns currency-separated totals and category totals.
 async function getSummary(req, res) {
   try {
     const userId = req.user.userId;
@@ -233,25 +255,42 @@ async function getSummary(req, res) {
       where: { userId },
     });
 
-    // Calculate total amount spent
-    const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-
-    // Group expenses by category and calculate totals
-    // We use a plain object as a dictionary to accumulate totals per category
+    const currencyMap = {};
     const categoryMap = {};
     for (const expense of expenses) {
-      if (!categoryMap[expense.category]) {
-        categoryMap[expense.category] = { category: expense.category, total: 0, count: 0 };
+      if (!currencyMap[expense.currency]) {
+        currencyMap[expense.currency] = {
+          currency: expense.currency,
+          totalAmount: 0,
+          count: 0,
+        };
       }
-      categoryMap[expense.category].total += expense.amount;
-      categoryMap[expense.category].count += 1;
+      currencyMap[expense.currency].totalAmount += expense.amount;
+      currencyMap[expense.currency].count += 1;
+
+      const key = `${expense.currency}:${expense.category}`;
+      if (!categoryMap[key]) {
+        categoryMap[key] = {
+          category: expense.category,
+          currency: expense.currency,
+          total: 0,
+          count: 0,
+        };
+      }
+      categoryMap[key].total += expense.amount;
+      categoryMap[key].count += 1;
     }
 
-    // Convert the object to an array and sort by total (highest first)
+    const totalsByCurrency = Object.values(currencyMap)
+      .map((item) => ({
+        ...item,
+        totalAmount: Math.round(item.totalAmount * 100) / 100,
+      }))
+      .sort((a, b) => a.currency.localeCompare(b.currency));
     const byCategory = Object.values(categoryMap).sort((a, b) => b.total - a.total);
 
     res.json({
-      totalAmount: Math.round(totalAmount * 100) / 100, // Round to 2 decimal places
+      totalsByCurrency,
       totalCount: expenses.length,
       byCategory,
     });

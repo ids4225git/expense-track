@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { getExpenses, deleteExpense, getExpenseSummary } from '../services/expenseService';
 import ExpenseCard from '../components/ExpenseCard';
 import CategoryChart from '../components/CategoryChart';
+import { formatCurrency } from '../utils/currency';
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -103,17 +104,23 @@ function DashboardPage() {
       {/* Summary Cards */}
       {summary && (
         <div className="summary-cards">
-          <div className="summary-card">
-            <h3>Total Spent</h3>
-            <p className="summary-value">${summary.totalAmount.toFixed(2)}</p>
-          </div>
+          {summary.totalsByCurrency.map((total) => (
+            <div className="summary-card" key={total.currency}>
+              <h3>Total Spent ({total.currency})</h3>
+              <p className="summary-value">
+                {formatCurrency(total.totalAmount, total.currency)}
+              </p>
+            </div>
+          ))}
           <div className="summary-card">
             <h3>Total Expenses</h3>
             <p className="summary-value">{summary.totalCount}</p>
           </div>
           <div className="summary-card">
             <h3>Categories</h3>
-            <p className="summary-value">{summary.byCategory.length}</p>
+            <p className="summary-value">
+              {new Set(summary.byCategory.map((item) => item.category)).size}
+            </p>
           </div>
         </div>
       )}

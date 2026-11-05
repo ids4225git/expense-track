@@ -103,12 +103,13 @@ async function runTests() {
     {
       title: 'Groceries at Supermarket',
       amount: 45.5,
+      currency: 'USD',
       category: 'Food',
       date: new Date().toISOString(),
       description: 'Weekly grocery run',
     }
   );
-  console.log(`Expense 1 created (status ${exp1.status}):`, exp1.data?.title, `$${exp1.data?.amount}`);
+  console.log(`Expense 1 created (status ${exp1.status}):`, exp1.data?.title, `${exp1.data?.currency} ${exp1.data?.amount}`);
 
   const exp2 = await request(
     {
@@ -121,12 +122,13 @@ async function runTests() {
     {
       title: 'Monthly Train Pass',
       amount: 80.0,
+      currency: 'JPY',
       category: 'Transport',
       date: new Date().toISOString(),
       description: 'Metro pass',
     }
   );
-  console.log(`Expense 2 created (status ${exp2.status}):`, exp2.data?.title, `$${exp2.data?.amount}`);
+  console.log(`Expense 2 created (status ${exp2.status}):`, exp2.data?.title, `${exp2.data?.currency} ${exp2.data?.amount}`);
 
   // 5. Get Expenses
   console.log('\n5. Testing GET /api/expenses...');
@@ -148,7 +150,7 @@ async function runTests() {
     method: 'GET',
     headers: authHeaders,
   });
-  console.log(`Summary (status ${summaryRes.status}): Total = $${summaryRes.data?.totalAmount}, Count = ${summaryRes.data?.totalCount}, Categories = ${summaryRes.data?.byCategory?.length}`);
+  console.log(`Summary (status ${summaryRes.status}):`, summaryRes.data?.totalsByCurrency, `Count = ${summaryRes.data?.totalCount}, Categories = ${summaryRes.data?.byCategory?.length}`);
 
   // 7. Update Expense 1
   console.log('\n7. Testing PUT /api/expenses/:id...');
@@ -168,7 +170,7 @@ async function runTests() {
       description: 'Updated with receipt items',
     }
   );
-  console.log(`Status: ${updateRes.status}, Updated Title:`, updateRes.data?.title, `New Amount: $${updateRes.data?.amount}`);
+  console.log(`Status: ${updateRes.status}, Updated Title:`, updateRes.data?.title, `New Amount: ${updateRes.data?.currency} ${updateRes.data?.amount}`);
 
   // 8. Delete Expense 2
   console.log('\n8. Testing DELETE /api/expenses/:id...');

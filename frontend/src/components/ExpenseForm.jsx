@@ -28,6 +28,7 @@ function ExpenseForm({ initialData = {}, onSubmit, buttonText = 'Save' }) {
   // Form state — initialize with provided data or empty defaults
   const [title, setTitle] = useState(initialData.title || '');
   const [amount, setAmount] = useState(initialData.amount || '');
+  const [currency, setCurrency] = useState(initialData.currency || 'JPY');
   const [category, setCategory] = useState(initialData.category || 'Food');
   const [date, setDate] = useState(
     initialData.date
@@ -53,10 +54,16 @@ function ExpenseForm({ initialData = {}, onSubmit, buttonText = 'Save' }) {
       return;
     }
 
+    if (currency === 'JPY' && !Number.isInteger(Number(amount))) {
+      setError('Japanese yen amounts must be whole numbers.');
+      return;
+    }
+
     // Call the parent's onSubmit with the form data
     onSubmit({
       title: title.trim(),
       amount: Number(amount),
+      currency,
       category,
       date,
       description: description.trim(),
@@ -79,16 +86,28 @@ function ExpenseForm({ initialData = {}, onSubmit, buttonText = 'Save' }) {
       </div>
 
       <div className="form-group">
-        <label htmlFor="amount">Amount ($)</label>
+        <label htmlFor="amount">Amount ({currency === 'JPY' ? '¥ JPY' : '$ USD'})</label>
         <input
           id="amount"
           type="number"
-          step="0.01"
-          min="0.01"
+          step={currency === 'JPY' ? '1' : '0.01'}
+          min={currency === 'JPY' ? '1' : '0.01'}
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          placeholder="e.g., 12.50"
+          placeholder={currency === 'JPY' ? 'e.g., 1200' : 'e.g., 12.50'}
         />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="currency">Currency</label>
+        <select
+          id="currency"
+          value={currency}
+          onChange={(e) => setCurrency(e.target.value)}
+        >
+          <option value="JPY">Japanese yen (JPY ¥)</option>
+          <option value="USD">US dollar (USD $)</option>
+        </select>
       </div>
 
       <div className="form-group">
